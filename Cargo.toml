@@ -1,0 +1,8 @@
+[package]
+name = "spoop"
+version = "0.1.0"
+authors = ["Emīls Piņķis <pinkisemils@gmail.com>"]
+
+[dependencies]
+spotify = "0.6.0"
+mpv = "0.2.3"
