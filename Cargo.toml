@@ -10,4 +10,4 @@ taglib = "0.2.0"
 diesel = { version = "0.10.0", features = ["postgres"]  }
 diesel_codegen = { version = "0.10.0", features = ["postgres"]  }
 dotenv = "0.8.0"
-
+clap = "2.20.1"

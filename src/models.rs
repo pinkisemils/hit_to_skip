@@ -1,8 +1,10 @@
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
+use diesel::types::Timestamp;
 use dotenv::dotenv;
 use std::env;
 use std::time::SystemTime;
+use diesel::types::ToSql;
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
@@ -14,6 +16,7 @@ pub fn establish_connection() -> PgConnection {
 }
 
 #[derive(Queryable)]
+#[has_many(ranks)]
 pub struct Track {
     pub id: i32,
     pub path: String,
@@ -22,7 +25,9 @@ pub struct Track {
     pub artist: String,
 }
 
+use super::schema::tracks;
 #[derive(Insertable)]
+#[has_many(ranks)]
 #[table_name="tracks"]
 pub struct InsTrack<'a> {
     pub path: &'a str,
@@ -37,10 +42,11 @@ pub struct User {
     pub allowance: i32,
 }
 
+use super::schema::users;
 #[derive(Insertable)]
 #[table_name="users"]
 pub struct InsUser<'a> {
-    pub path: &'a str,
+    pub user_id: &'a str,
     pub allowance: i32,
 }
 
@@ -51,10 +57,10 @@ pub struct Rank {
     pub timestamp: SystemTime,
 }
 
+use super::schema::ranks;
 #[derive(Insertable)]
 #[table_name="ranks"]
 pub struct InsRank<'a> {
-    pub path: &'a str,
-    pub allowance: i32,
-    pub timestamp: &'a SystemTime,
+    pub song_id: i32,
+    pub user_id: &'a str,
 }

@@ -1,23 +1,14 @@
-#![feature(custom_derive)]
-#![feature(custom_attribute)]
 extern crate mpv;
 extern crate diesel;
-
-#[macro_use]
-extern crate diesel_codegen;
 
 extern crate dotenv;
 extern crate taglib;
 // use mpv::mpv;
 use std::env;
 use std::path::Path;
-use std::thread::sleep_ms;
 use std::thread::spawn;
 use std::sync::mpsc;
 use std::io;
-
-pub mod schema;
-pub mod models;
 
 enum PlayState{
     PauseResume,
