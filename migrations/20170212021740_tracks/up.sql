@@ -1,5 +1,5 @@
 CREATE TABLE tracks (
-      id SERIAL PRIMARY KEY,
+      track_id SERIAL PRIMARY KEY,
       path VARCHAR NOT NULL,
       title VARCHAR NOT NULL,
       album VARCHAR NOT NULL,

@@ -1,10 +1,12 @@
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use diesel::types::Timestamp;
+use diesel;
 use dotenv::dotenv;
 use std::env;
 use std::time::SystemTime;
 use diesel::types::ToSql;
+use std::hash::Hash;
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
@@ -15,14 +17,22 @@ pub fn establish_connection() -> PgConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
-#[derive(Queryable)]
+#[derive(Queryable, Associations,HasTable)]
+#[table_name="tracks"]
 #[has_many(ranks)]
 pub struct Track {
-    pub id: i32,
+    pub track_id: i32,
     pub path: String,
     pub title: String,
     pub album: String,
     pub artist: String,
+}
+
+impl diesel::associations::Identifiable for Track {
+    type Id=u64;
+    fn id(self) -> Self::Id {
+        self.track_id.hash()
+    }
 }
 
 use super::schema::tracks;
@@ -50,17 +60,25 @@ pub struct InsUser<'a> {
     pub allowance: i32,
 }
 
-#[derive(Queryable)]
+#[derive(Queryable, Associations,HasTable)]
+#[table_name="ranks"]
 pub struct Rank {
-    pub song_id: i32,
+    pub track_id: i32,
     pub user_id: String,
     pub timestamp: SystemTime,
+}
+
+impl diesel::associations::Identifiable for Rank {
+    type Id=u64;
+    fn id(self) -> Self::Id {
+        (self.track_id, self.user_id).hash()
+    }
 }
 
 use super::schema::ranks;
 #[derive(Insertable)]
 #[table_name="ranks"]
 pub struct InsRank<'a> {
-    pub song_id: i32,
+    pub track_id: i32,
     pub user_id: &'a str,
 }
