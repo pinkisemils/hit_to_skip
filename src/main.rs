@@ -9,6 +9,8 @@ use std::thread::spawn;
 use std::sync::mpsc;
 use std::io;
 
+pub mod schema;
+pub mod models;
 
 enum PlayState{
     PauseResume,
