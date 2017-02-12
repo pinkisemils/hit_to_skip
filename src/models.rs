@@ -17,7 +17,8 @@ pub fn establish_connection() -> PgConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
-#[derive(Queryable, Associations,HasTable)]
+#[primary_key(track_id)]
+#[derive(Queryable, Associations, Identifiable)]
 #[table_name="tracks"]
 #[has_many(ranks)]
 pub struct Track {
@@ -28,12 +29,12 @@ pub struct Track {
     pub artist: String,
 }
 
-impl diesel::associations::Identifiable for Track {
-    type Id=u64;
-    fn id(self) -> Self::Id {
-        self.track_id.hash()
-    }
-}
+//impl diesel::associations::Identifiable for Track {
+//    type Id=u64;
+//    fn id(self) -> Self::Id {
+//        self.track_id.hash()
+//    }
+//}
 
 use super::schema::tracks;
 #[derive(Insertable)]
@@ -60,19 +61,13 @@ pub struct InsUser<'a> {
     pub allowance: i32,
 }
 
-#[derive(Queryable, Associations,HasTable)]
+#[primary_key(track_id,user_id)]
+#[derive(Queryable, Associations)]
 #[table_name="ranks"]
 pub struct Rank {
     pub track_id: i32,
     pub user_id: String,
     pub timestamp: SystemTime,
-}
-
-impl diesel::associations::Identifiable for Rank {
-    type Id=u64;
-    fn id(self) -> Self::Id {
-        (self.track_id, self.user_id).hash()
-    }
 }
 
 use super::schema::ranks;
