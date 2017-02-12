@@ -35,11 +35,10 @@ struct Results {
 fn search(term: &str) -> JSON<Results> {
     let conn = models::establish_connection();
     use schema::tracks::dsl::*;
-    if let Ok(matching_tracks) = tracks.filter(title.like(term))
+    let query_str = "%".to_string();
+    if let Ok(matching_tracks) = tracks.filter(title.like(query_str + term + "%"))
                                 .limit(100)
                                 .load::<models::Track>(&conn){
-                                    println!("Succ");
-                                    println!("SUCC: {}");
                                     JSON(Results{candidates:matching_tracks})
                                 } else {
                                     println!("Fail");
