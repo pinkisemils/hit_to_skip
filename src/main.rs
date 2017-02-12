@@ -49,12 +49,16 @@ fn read_serial(path: String, tx: mpsc::Sender<PlayState>) {
             Ok(_) => {
                 match input_buf[0] as char {
                     's' => {
+                        println!("Received an 's'");
                         match tx.send(PlayState::Skip) {
                             Ok(_) => continue,
                             Err(e) => return,
                         }
                     }
-                    _ => continue,
+                    anything => {
+                        println!("Received a '{}'",anything );
+                        return;
+                    },
                 }
             }
             Err(e) => {
