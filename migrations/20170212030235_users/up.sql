@@ -1,4 +1,4 @@
 CREATE TABLE users (
-    user_id VARCHAR NOT NULL PRIMARY_KEY,
-    allowance INTEGER NOT NULL,
+    user_id VARCHAR PRIMARY KEY,
+    allowance INTEGER NOT NULL
 )
