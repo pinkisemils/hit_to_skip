@@ -42,7 +42,7 @@ fn read_serial(path: String, tx: mpsc::Sender<PlayState>) {
             Ok(())
         })
         .expect("Couldn't even configure the damn tty");
-    port.set_timeout(time::Duration::from_millis(10 * 1000)).expect("Couldn't even set the timeout");
+    port.set_timeout(time::Duration::from_millis(1 * 1000)).expect("Couldn't even set the timeout");
     loop {
         let mut input_buf = vec![0x0u8];
         match port.read(&mut input_buf) {
@@ -181,10 +181,10 @@ fn main() {
         });
         //let mut input = String::new();
         //let tty_path = std::io::stdin().read_line(&mut input).expect("Failed to read tty path");
-        let tty_path = "/dev/ttyACM0".to_string();
+        let tty_path = "/dev/ttyACM1".to_string();
 
         let s_tx = tx.clone();
-        let s_handle = spawn(|| read_serial(tty_path, s_tx));
+        let s_handle = spawn(move || loop {read_serial(tty_path.clone(), s_tx.clone())});
         // code that will wait for logic shit to come in and tell if it should skip or not
         loop {
             let mut input = String::new();
