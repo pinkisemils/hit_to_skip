@@ -11,3 +11,4 @@ diesel = { version = "0.10.0", features = ["postgres"]  }
 diesel_codegen = { version = "0.10.0", features = ["postgres"]  }
 dotenv = "0.8.0"
 clap = "2.20.1"
+id3 = "0.1.11"

@@ -5,8 +5,6 @@ use diesel;
 use dotenv::dotenv;
 use std::env;
 use std::time::SystemTime;
-use diesel::types::ToSql;
-use std::hash::Hash;
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
@@ -28,13 +26,6 @@ pub struct Track {
     pub album: String,
     pub artist: String,
 }
-
-//impl diesel::associations::Identifiable for Track {
-//    type Id=u64;
-//    fn id(self) -> Self::Id {
-//        self.track_id.hash()
-//    }
-//}
 
 use super::schema::tracks;
 #[derive(Insertable)]
