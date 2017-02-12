@@ -179,9 +179,11 @@ fn main() {
             }
 
         });
+        let mut input = String::new();
+        let tty_path = std::io::stdin().read_line(&mut input).expect("Failed to read tty path");
 
         let s_tx = tx.clone();
-        let s_handle = spawn(|| read_serial("/dev/ttyACM0".to_string(), s_tx));
+        let s_handle = spawn(|| read_serial(input, s_tx));
         // code that will wait for logic shit to come in and tell if it should skip or not
         loop {
             let mut input = String::new();
