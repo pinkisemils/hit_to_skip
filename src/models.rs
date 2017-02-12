@@ -16,7 +16,7 @@ pub fn establish_connection() -> PgConnection {
 }
 
 #[primary_key(track_id)]
-#[derive(Queryable, Associations, Identifiable)]
+#[derive(Queryable, Associations, Identifiable,Serialize)]
 #[table_name="tracks"]
 #[has_many(ranks)]
 pub struct Track {

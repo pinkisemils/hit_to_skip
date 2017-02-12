@@ -7,8 +7,7 @@ extern crate id3;
 use id3::Tag;
 use spoop::models;
 use spoop::schema;
-use clap::{Arg, App, SubCommand};
-use diesel::result::Error as DieselErr;
+use clap::{Arg, App};
 use self::diesel::prelude::*;
 use self::diesel::pg::PgConnection;
 use walkdir::WalkDir;
@@ -24,7 +23,6 @@ fn get_dir() -> String {
         .to_string()
 }
 
-const buff_size: usize = 1000;
 fn walk_dir(root_path: String, conn: &PgConnection) {
     use schema::tracks;
     let mut count = 0;
