@@ -43,11 +43,14 @@ fn simple_example(file_path: &Path, rx: &mpsc::Receiver<PlayState>) -> bool {
             while let Some(event) = mpv.wait_event(0.100) {
                 // even if you don't do anything with the events, it is still necessary to empty
                 // the event loop
-                println!("RECEIVED EVENT : {:?}", event);
                 match event {
                     // Shutdown will be triggered when the window is explicitely closed,
                     // while Idle will be triggered when the queue will end
                     //mpv::Event::Shutdown | mpv::Event::Idle => {
+                    mpv::Event::EndFile(_) => {
+                        stop = false;
+                        break 'main;
+                    }
                     mpv::Event::Shutdown => {
                         break 'main;
                     }
@@ -74,7 +77,7 @@ fn simple_example(file_path: &Path, rx: &mpsc::Receiver<PlayState>) -> bool {
                 }
             };
         }
-        match mpv.command(&["q", "0"]){
+        match mpv.command(&["quit", "0"]){
             Err(e) => println!("Failed to quit current mpv instance: {}", e),
             _ => (),
         }
@@ -103,7 +106,7 @@ fn main() {
                 for path in files.iter() {
                     let path: &Path = Path::new(path);
                     if simple_example(path, &rx) {
-                        break;
+                        return;
                     };
 
                 }
@@ -139,5 +142,6 @@ fn main() {
 
         }
         player_thread_handle.join().expect("failed to join player thread");
+
     }
 }
