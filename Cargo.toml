@@ -4,5 +4,9 @@ version = "0.1.0"
 authors = ["Emīls Piņķis <pinkisemils@gmail.com>"]
 
 [dependencies]
-spotify = "0.6.0"
 mpv = "0.2.3"
+taglib = "0.2.0"
+diesel = { version = "0.10.0", features = ["postgres"]  }
+diesel_codegen = { version = "0.10.0", features = ["postgres"]  }
+dotenv = "0.8.0"
+

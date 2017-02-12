@@ -1,4 +1,6 @@
-extern crate mpv ;
+extern crate mpv;
+extern crate diesel;
+extern crate taglib;
 // use mpv::mpv;
 use std::env;
 use std::path::Path;
