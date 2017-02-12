@@ -48,7 +48,7 @@ fn read_serial(path: String, tx: mpsc::Sender<PlayState>) {
         match port.read(&mut input_buf) {
             Ok(_) => {
                 match input_buf[0] as char {
-                    's' => {
+                    'S' => {
                         println!("Received an 's'");
                         match tx.send(PlayState::Skip) {
                             Ok(_) => continue,
@@ -56,8 +56,8 @@ fn read_serial(path: String, tx: mpsc::Sender<PlayState>) {
                         }
                     }
                     anything => {
-                        println!("Received a '{}'",anything );
-                        return;
+                        //println!("Received a '{}'",anything );
+                        continue;
                     },
                 }
             }
@@ -179,11 +179,12 @@ fn main() {
             }
 
         });
-        let mut input = String::new();
-        let tty_path = std::io::stdin().read_line(&mut input).expect("Failed to read tty path");
+        //let mut input = String::new();
+        //let tty_path = std::io::stdin().read_line(&mut input).expect("Failed to read tty path");
+        let tty_path = "/dev/ttyACM0".to_string();
 
         let s_tx = tx.clone();
-        let s_handle = spawn(|| read_serial(input, s_tx));
+        let s_handle = spawn(|| read_serial(tty_path, s_tx));
         // code that will wait for logic shit to come in and tell if it should skip or not
         loop {
             let mut input = String::new();
