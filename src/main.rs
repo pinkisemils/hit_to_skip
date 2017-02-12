@@ -1,4 +1,5 @@
-extern crate mpv ;
+extern crate mpv;
+extern crate serial;
 // use mpv::mpv;
 use std::env;
 use std::path::Path;
@@ -6,6 +7,62 @@ use std::thread::sleep_ms;
 use std::thread::spawn;
 use std::sync::mpsc;
 use std::io;
+use std::time;
+use std::io::prelude::*;
+use serial::prelude::*;
+
+//fn interact<T: SerialPort>(port: &mut T) -> io::Result<()> {
+//    try!(port.reconfigure(&|settings| {
+//        try!(settings.set_baud_rate(serial::Baud9600));
+//        settings.set_char_size(serial::Bits8);
+//        settings.set_parity(serial::ParityNone);
+//        settings.set_stop_bits(serial::Stop1);
+//        settings.set_flow_control(serial::FlowNone);
+//        Ok(())
+//    }));
+//
+//    try!(port.set_timeout(Duration::from_millis(1000)));
+//
+//    let mut buf: Vec<u8> = (0..255).collect();
+//
+//    try!(port.write(&buf[..]));
+//    try!(port.read(&mut buf[..]));
+//
+//    Ok(())
+//}
+
+fn read_serial(path: String, tx: mpsc::Sender<PlayState>) {
+    let mut port = serial::open(&path).expect("What the heckin' heck, can't even open up a TTY");
+    port.reconfigure(&|settings| {
+        settings.set_baud_rate(serial::Baud9600).expect("Couldn't even set the baud rate");
+        settings.set_char_size(serial::Bits8);
+        settings.set_parity(serial::ParityNone);
+        settings.set_stop_bits(serial::Stop1);
+        settings.set_flow_control(serial::FlowNone);
+        Ok(())
+    }).expect("Couldn't even configure the damn tty");
+    port.set_timeout(time::Duration::from_millis(1000)).expect("Couldn't even set the timeout");
+    loop {
+        let mut input_buf = vec![0x0u8];
+        if let Ok(read) = port.read(&mut input_buf) {
+            match input_buf[0] as char {
+                's' => {
+                    match tx.send(PlayState::Skip) {
+                        Ok(_) => continue,
+                        Err(_) => return,
+                    }
+                },
+                _ =>continue,
+
+            }
+
+        } else {
+            println!("It's time to stop");
+            return;
+        }
+    }
+
+}
 
 
 enum PlayState{
@@ -114,6 +171,10 @@ fn main() {
 
         });
 
+        let s_tx = tx.clone();
+        let s_handle = spawn(||{
+            read_serial("/dev/ttyACM0".to_string(), s_tx)
+        });
         // code that will wait for logic shit to come in and tell if it should skip or not
         loop {
             let mut input = String::new();
@@ -121,7 +182,6 @@ fn main() {
                 Ok(_) => {
                     let input = input.trim();
                     match input.as_ref() {
-                        "s" => tx.send(PlayState::Skip).expect("failed to send command to player chan"),
                         "q" => {
                             tx.send(PlayState::Stop).expect("failed to send command to player chan");
                             break;
@@ -142,6 +202,7 @@ fn main() {
 
         }
         player_thread_handle.join().expect("failed to join player thread");
+        s_handle.join().expect("failed to join player thread");
 
     }
 }

@@ -6,3 +6,4 @@ authors = ["Emīls Piņķis <pinkisemils@gmail.com>"]
 [dependencies]
 spotify = "0.6.0"
 mpv = "0.2.3"
+serial = "0.3"
